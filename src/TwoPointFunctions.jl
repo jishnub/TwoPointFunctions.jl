@@ -11,13 +11,13 @@ cosχ(x::Vector{<:Real}) = cos(x[1])cos(x[3]) + sin(x[1])sin(x[3])cos(x[2]-x[4])
 ∂²cosχ(x) = ForwardDiff.hessian(cosχ,x)
 
 for fn in ["cosχ","∂cosχ","∂²cosχ"]
-	@eval $(Symbol(fn))((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = $(Symbol(fn))([θ₁,ϕ₁,θ₂,ϕ₂])
+	@eval $(Symbol(fn))((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = $(Symbol(fn))([θ₁,ϕ₁,θ₂,ϕ₂])
 	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
-	@eval $(Symbol(fn))((θ₁,ϕ₁)::NTuple{2,Real},θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
-	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,(θ₂,ϕ₂)::NTuple{2,Real}) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
-	@eval $(Symbol(fn))((θ₁,ϕ₁)::NTuple{2,Real},n::SphericalPoint) = $(Symbol(fn))((θ₁,ϕ₁),(n.θ,n.ϕ))
+	@eval $(Symbol(fn))((θ₁,ϕ₁)::Tuple{<:Real,<:Real},θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
+	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
+	@eval $(Symbol(fn))((θ₁,ϕ₁)::Tuple{<:Real,<:Real},n::SphericalPoint) = $(Symbol(fn))((θ₁,ϕ₁),(n.θ,n.ϕ))
 	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,n::SphericalPoint) = $(Symbol(fn))((θ₁,ϕ₁),(n.θ,n.ϕ))
-	@eval $(Symbol(fn))(n::SphericalPoint,(θ₂,ϕ₂)::NTuple{2,Real}) = $(Symbol(fn))((n.θ,n.ϕ),(θ₂,ϕ₂))
+	@eval $(Symbol(fn))(n::SphericalPoint,(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = $(Symbol(fn))((n.θ,n.ϕ),(θ₂,ϕ₂))
 	@eval $(Symbol(fn))(n::SphericalPoint,θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((n.θ,n.ϕ),(θ₂,ϕ₂))
 	@eval $(Symbol(fn))(n₁::SphericalPoint,n₂::SphericalPoint) = $(Symbol(fn))((n₁.θ,n₁.ϕ),(n₂.θ,n₂.ϕ))
 end
@@ -60,8 +60,8 @@ end
 
 # The following functions are not defined if the gradients are evaluated at the poles
 
-∇ϕ₁cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = -sin(θ₂)sin(ϕ₁-ϕ₂)
-∇ϕ₂cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = sin(θ₁)sin(ϕ₁-ϕ₂)
+∇ϕ₁cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = -sin(θ₂)sin(ϕ₁-ϕ₂)
+∇ϕ₂cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = sin(θ₁)sin(ϕ₁-ϕ₂)
 push!(list_of_function_names,"∇ϕ₁cosχ")
 push!(list_of_function_names,"∇ϕ₂cosχ")
 
@@ -74,12 +74,12 @@ for pt in 1:2
 	@eval $(Symbol(fname))(x...) = $(Symbol("∂ϕ$(subscripts[pt])∂ϕ$(subscripts[pt])cosχ"))(x...)
 end
 
-∇ϕ₁∂ϕ₁cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = -sin(θ₂)cos(ϕ₁-ϕ₂)
-∇ϕ₁∂ϕ₂cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = sin(θ₂)cos(ϕ₁-ϕ₂)
-∂ϕ₁∇ϕ₂cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = sin(θ₁)cos(ϕ₁-ϕ₂)
-∇ϕ₂∂ϕ₂cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = -sin(θ₂)cos(ϕ₁-ϕ₂)
-∂ϕ₁∇ϕ₁cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = ∇ϕ₁∂ϕ₁cosχ((θ₁,ϕ₁),(θ₂,ϕ₂))
-∂ϕ₂∇ϕ₂cosχ((θ₁,ϕ₁)::NTuple{2,Real},(θ₂,ϕ₂)::NTuple{2,Real}) = ∇ϕ₂∂ϕ₂cosχ((θ₁,ϕ₁),(θ₂,ϕ₂))
+∇ϕ₁∂ϕ₁cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = -sin(θ₂)cos(ϕ₁-ϕ₂)
+∇ϕ₁∂ϕ₂cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = sin(θ₂)cos(ϕ₁-ϕ₂)
+∂ϕ₁∇ϕ₂cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = sin(θ₁)cos(ϕ₁-ϕ₂)
+∇ϕ₂∂ϕ₂cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = -sin(θ₂)cos(ϕ₁-ϕ₂)
+∂ϕ₁∇ϕ₁cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = ∇ϕ₁∂ϕ₁cosχ((θ₁,ϕ₁),(θ₂,ϕ₂))
+∂ϕ₂∇ϕ₂cosχ((θ₁,ϕ₁)::Tuple{<:Real,<:Real},(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = ∇ϕ₂∂ϕ₂cosχ((θ₁,ϕ₁),(θ₂,ϕ₂))
 push!(list_of_function_names,"∇ϕ₁∂ϕ₂cosχ")
 push!(list_of_function_names,"∂ϕ₁∇ϕ₁cosχ")
 push!(list_of_function_names,"∂ϕ₁∇ϕ₂cosχ")
@@ -106,11 +106,11 @@ end
 # Add methods
 for fn in list_of_function_names
 	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
-	@eval $(Symbol(fn))((θ₁,ϕ₁)::NTuple{2,Real},θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
-	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,(θ₂,ϕ₂)::NTuple{2,Real}) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
-	@eval $(Symbol(fn))((θ₁,ϕ₁)::NTuple{2,Real},n::SphericalPoint) = $(Symbol(fn))((θ₁,ϕ₁),(n.θ,n.ϕ))
+	@eval $(Symbol(fn))((θ₁,ϕ₁)::Tuple{<:Real,<:Real},θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
+	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = $(Symbol(fn))((θ₁,ϕ₁),(θ₂,ϕ₂))
+	@eval $(Symbol(fn))((θ₁,ϕ₁)::Tuple{<:Real,<:Real},n::SphericalPoint) = $(Symbol(fn))((θ₁,ϕ₁),(n.θ,n.ϕ))
 	@eval $(Symbol(fn))(θ₁::Real,ϕ₁::Real,n::SphericalPoint) = $(Symbol(fn))((θ₁,ϕ₁),(n.θ,n.ϕ))
-	@eval $(Symbol(fn))(n::SphericalPoint,(θ₂,ϕ₂)::NTuple{2,Real}) = $(Symbol(fn))((n.θ,n.ϕ),(θ₂,ϕ₂))
+	@eval $(Symbol(fn))(n::SphericalPoint,(θ₂,ϕ₂)::Tuple{<:Real,<:Real}) = $(Symbol(fn))((n.θ,n.ϕ),(θ₂,ϕ₂))
 	@eval $(Symbol(fn))(n::SphericalPoint,θ₂::Real,ϕ₂::Real) = $(Symbol(fn))((n.θ,n.ϕ),(θ₂,ϕ₂))
 	@eval $(Symbol(fn))(n₁::SphericalPoint,n₂::SphericalPoint) = $(Symbol(fn))((n₁.θ,n₁.ϕ),(n₂.θ,n₂.ϕ))
 end
