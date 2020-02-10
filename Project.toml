@@ -6,3 +6,6 @@ version = "0.1.1"
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
 PointsOnASphere = "efc6e1ae-3467-11e9-103f-8bc3b66ed045"
+
+[compat]
+ForwardDiff = "0.10"
