@@ -1,8 +1,18 @@
 name = "TwoPointFunctions"
 uuid = "4eee33de-34ff-11e9-2471-f976ccef942e"
-authors = ["Jishnu Bhattacharya <jishnuonline@gmail.com>"]
-version = "0.1.1"
+authors = ["Jishnu Bhattacharya"]
+version = "0.2.0"
 
 [deps]
 ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
-PointsOnASphere = "efc6e1ae-3467-11e9-103f-8bc3b66ed045"
+StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
+
+[compat]
+ForwardDiff = "0.10"
+StaticArrays = "0.12"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
