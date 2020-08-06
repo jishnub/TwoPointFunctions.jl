@@ -29,7 +29,7 @@ angular distance along a great circle between these two points on a sphere.
 
 Numerically this is given by
 ```math
-\\cos\\chi((\\theta_1,\\phi_1), (\\theta_1,\\phi_1)) = \\cos(\\theta_1)\\cos(\\theta_2) + 
+\\cos\\chi((\\theta_1,\\phi_1), (\\theta_2,\\phi_2)) = \\cos(\\theta_1)\\cos(\\theta_2) + 
 \\sin(\\theta_1)\\sin(\\theta_2)\\cos(\\phi_1 - \\phi_2)
 ```
 
